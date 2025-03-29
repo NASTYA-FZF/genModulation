@@ -18,7 +18,7 @@ MyGraph::MyGraph()
 	on_off = true;
 	maxY = 1.5;
 	minY = -1.5;
-	maxX = 1;
+	maxX = 1000;
 	minX = 0.;
 	cur = 2;
 	num_network = 12;
@@ -185,16 +185,33 @@ void MyGraph::DrawMyText(Gdiplus::Graphics& draw, Gdiplus::Matrix& matr)
 
 void MyGraph::DrawFunction(Gdiplus::Graphics& draw, Gdiplus::Matrix& matr)
 {
-	for (int iter = 1; iter < my_func[0].size() - 1; iter++)
+	if (!fl_pt)
 	{
-		for (int j = 0; j < my_func.size(); j++)
+		for (int iter = 1; iter < my_func[0].size() - 1; iter++)
 		{
-			Pen pen_graph({ 255, Red[j], Green[j], Blue[j] }, 3);
-			pt1 = PointF((my_x[j][iter - 1]), my_func[j][iter - 1]);
-			pt2 = PointF(my_x[j][iter], my_func[j][iter]);
-			matr.TransformPoints(&pt1, 1);
-			matr.TransformPoints(&pt2, 1);
-			draw.DrawLine(&pen_graph, pt1, pt2);
+			for (int j = 0; j < my_func.size(); j++)
+			{
+				Pen pen_graph({ 255, Red[j], Green[j], Blue[j] }, 3);
+				pt1 = PointF((my_x[j][iter - 1]), my_func[j][iter - 1]);
+				pt2 = PointF(my_x[j][iter], my_func[j][iter]);
+				matr.TransformPoints(&pt1, 1);
+				matr.TransformPoints(&pt2, 1);
+				draw.DrawLine(&pen_graph, pt1, pt2);
+			}
+		}
+	}
+	else
+	{
+		double r = 1.;
+		SolidBrush b_diag({ 255, 0, 0, 255 });
+		for (int iter = 1; iter < my_func[0].size(); iter++)
+		{
+			for (int j = 0; j < my_func.size(); j++)
+			{
+				pt2 = PointF(my_x[j][iter], my_func[j][iter]);
+				matr.TransformPoints(&pt2, 1);
+				draw.FillEllipse(&b_diag, pt2.X - (REAL)r, pt2.Y - r, 2. * r, 2. * r);
+			}
 		}
 	}
 }
@@ -226,14 +243,14 @@ bool MyGraph::FindMinMax()
 		if (i == 0)
 		{
 			minX = my_x[i][0];
-			//maxX = my_x[i][0];
+			maxX = my_x[i][0];
 			minY = my_func[i][0];
 			maxY = my_func[i][0];
 		}
 
 		for (int j = 0; j < sizeX; j++)
 		{
-			//if (my_x[i][j] > maxX) maxX = my_x[i][j];
+			if (my_x[i][j] > maxX) maxX = my_x[i][j];
 			if (my_x[i][j] < minX) minX = my_x[i][j];
 			if (my_func[i][j] > maxY) maxY = my_func[i][j];
 			if (my_func[i][j] < minY) minY = my_func[i][j];
@@ -247,7 +264,7 @@ bool MyGraph::FindMinMax()
 	if (minX == maxX)
 	{
 		minX -= 1.;
-		//maxX += 1.;
+		maxX += 1.;
 	}
 	return true;
 }

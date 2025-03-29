@@ -17,9 +17,11 @@ protected:
 
 public:
 	ULONG_PTR token;
-	std::vector<std::vector<UINT16>> my_func;
+	std::vector<std::vector<long long>> my_func;
+	//std::vector<std::vector<double>> my_func;
 	std::vector<std::vector<double>> my_x;
 	std::vector<BYTE> Red, Green, Blue;
+	bool fl_pt = false;
 	bool on_off, fon;
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 	double maxX, maxY;
